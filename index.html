@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dark Forest - Cosmic Sociology Interface</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --void-black: #000000;
+            --deep-space: #050508;
+            --starfield: #0a0a0f;
+            --threat-red: #ff0033;
+            --caution-amber: #ffaa00;
+            --stealth-cyan: #00ffff;
+            --silent-purple: #9900ff;
+            --distant-star: rgba(255, 255, 255, 0.8);
+            --dark-forest: #0a140a;
+        }
+        
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: var(--void-black);
+            color: rgba(255, 255, 255, 0.9);
+            overflow: hidden;
+            cursor: none;
+            height: 100vh;
+            width: 100vw;
+        }
+        
+        /* Cosmic Void Background */
+        .cosmic-void {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background: 
+                radial-gradient(ellipse at 30% 20%, rgba(255, 0, 51, 0.05) 0%, transparent 40%),
+                radial-gradient(ellipse at 70% 80%, rgba(0, 255, 255, 0.03) 0%, transparent 40%),
+                radial-gradient(ellipse at 50% 50%, rgba(153, 0, 255, 0.02) 0%, transparent 50%);
+        }
+        
+        /* Starfield with Parallax */
+        .starfield {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        .star {
+            position: absolute;
+            background: var(--distant-star);
+            border-radius: 50%;
+            animation: starTwinkle 3s infinite;
+        }
+        
+        @keyframes starTwinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+        
+        /* Holographic Cursor Tools */
+        .forest-cursor {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transition: all 0.1s;
+            mix-blend-mode: screen;
+        }
+        
+        .cursor-hunter {
+            width: 60px;
+            height: 60px;
+            border: 2px solid var(--threat-red);
+            border-radius: 50%;
+            opacity: 0;
+            position: relative;
+            box-shadow: 0 0 30px rgba(255, 0, 51, 0.3);
+        }
+        
+        .cursor-hunter.active {
+            opacity: 1;
+            animation: hunterLock 2s ease-in-out infinite;
+        }
+        
+        .cursor-hunter::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 4px;
+            height: 4px;
+            background: var(--threat-red);
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--threat-red);
+        }
+        
+        .cursor-hunter::after {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 15px;
+            background: var(--threat-red);
+        }
+        
+        @keyframes hunterLock {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(180deg); }
+        }
+        
+        .cursor-stealth {
+            width: 40px;
+            height: 40px;
+            opacity: 0;
+            border: 1px solid var(--stealth-cyan);
+            border-radius: 50%;
+            position: relative;
+        }
+        
+        .cursor-stealth.active {
+            opacity: 0.6;
+            animation: stealthPulse 3s ease-in-out infinite;
+        }
+        
+        @keyframes stealthPulse {
+            0%, 100% { transform: scale(1); opacity: 0.3; }
+            50% { transform: scale(1.3); opacity: 0.1; }
+        }
+        
+        /* Dark Forest Command */
+        .forest-command {
+            position: fixed;
+            top: 40px;
+            left: 40px;
+            z-index: 100;
+            font-family: 'Orbitron', monospace;
+        }
+        
+        .command-header {
+            font-size: 11px;
+            color: var(--threat-red);
+            letter-spacing: 0.4em;
+            margin-bottom: 20px;
+            animation: threatPulse 2s infinite;
+        }
+        
+        @keyframes threatPulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+        
+        .civilization-list {
+            list-style: none;
+        }
+        
+        .civ-signal {
+            padding: 15px 20px;
+            margin: 10px 0;
+            background: rgba(255, 0, 51, 0.05);
+            border-left: 3px solid transparent;
+            cursor: pointer;
+            transition: all 0.4s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .civ-signal::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 0, 51, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .civ-signal:hover::before {
+            left: 100%;
+        }
+        
+        .civ-signal:hover,
+        .civ-signal.active {
+            border-left-color: var(--threat-red);
+            background: rgba(255, 0, 51, 0.1);
+        }
+        
+        .civ-distance {
+            font-size: 10px;
+            color: var(--stealth-cyan);
+            margin-bottom: 5px;
+        }
+        
+        .civ-name {
+            font-size: 14px;
+            letter-spacing: 0.1em;
+        }
+        
+        .civ-threat {
+            font-size: 9px;
+            margin-top: 5px;
+            opacity: 0.6;
+        }
+        
+        .civ-threat.high { color: var(--threat-red); }
+        .civ-threat.medium { color: var(--caution-amber); }
+        .civ-threat.low { color: var(--stealth-cyan); }
+        
+        /* Central Tactical Display */
+        .tactical-display {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: 600px;
+        }
+        
+        .holographic-ring {
+            position: absolute;
+            border: 1px solid;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .ring-detection {
+            width: 100%;
+            height: 100%;
+            border-color: rgba(255, 0, 51, 0.2);
+            border-style: dashed;
+            animation: rotateCCW 30s linear infinite;
+        }
+        
+        .ring-stealth {
+            width: 75%;
+            height: 75%;
+            border-color: rgba(0, 255, 255, 0.15);
+            animation: rotateCW 25s linear infinite;
+        }
+        
+        .ring-communication {
+            width: 50%;
+            height: 50%;
+            border-color: rgba(153, 0, 255, 0.2);
+            border-style: dotted;
+            animation: rotateCCW 20s linear infinite;
+        }
+        
+        @keyframes rotateCW {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        
+        @keyframes rotateCCW {
+            from { transform: translate(-50%, -50%) rotate(360deg); }
+            to { transform: translate(-50%, -50%) rotate(0deg); }
+        }
+        
+        /* Swarm Intelligence Nodes */
+        .swarm-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .swarm-node {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: var(--stealth-cyan);
+            border-radius: 50%;
+            opacity: 0.6;
+            transition: all 0.5s;
+            box-shadow: 0 0 10px var(--stealth-cyan);
+        }
+        
+        .swarm-node.threat {
+            background: var(--threat-red);
+            box-shadow: 0 0 15px var(--threat-red);
+        }
+        
+        .swarm-connection {
+            position: absolute;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.3), transparent);
+            transform-origin: left center;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        /* Dark Forest Axiom Display */
+        .axiom-display {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 10;
+            max-width: 400px;
+        }
+        
+        .axiom-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 900;
+            color: var(--threat-red);
+            text-shadow: 0 0 30px rgba(255, 0, 51, 0.5);
+            margin-bottom: 20px;
+            letter-spacing: 0.2em;
+        }
+        
+        .axiom-text {
+            font-size: 1rem;
+            line-height: 1.8;
+            color: rgba(255, 255, 255, 0.6);
+            font-style: italic;
+        }
+        
+        .axiom-text .survival {
+            color: var(--stealth-cyan);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .axiom-text .survival:hover {
+            color: #fff;
+            text-shadow: 0 0 20px var(--stealth-cyan);
+        }
+        
+        /* Threat Assessment Panel */
+        .threat-panel {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            width: 300px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(255, 0, 51, 0.3);
+            padding: 25px;
+            z-index: 100;
+            font-family: 'Orbitron', monospace;
+        }
+        
+        .panel-header {
+            color: var(--threat-red);
+            font-size: 11px;
+            letter-spacing: 0.2em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 0, 51, 0.2);
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .panel-status {
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        
+        .thread-metric {
+            margin: 15px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .thread-label {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .thread-value {
+            font-size: 12px;
+            color: var(--stealth-cyan);
+        }
+        
+        .threat-bar {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            margin-top: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .threat-level {
+            height: 100%;
+            background: linear-gradient(90deg, var(--stealth-cyan), var(--caution-amber), var(--threat-red));
+            width: 67%;
+            position: relative;
+            animation: threatScan 3s linear infinite;
+        }
+        
+        @keyframes threatScan {
+            0% { opacity: 0.7; }
+            50% { opacity: 1; }
+            100% { opacity: 0.7; }
+        }
+        
+        /* Chain of Suspicion Modal */
+        .suspicion-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s;
+        }
+        
+        .suspicion-modal.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .modal-content {
+            max-width: 600px;
+            padding: 60px;
+            border: 2px solid var(--threat-red);
+            text-align: center;
+            position: relative;
+        }
+        
+        .modal-content::before {
+            content: '⚠ EXISTENTIAL THREAT';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #000;
+            padding: 0 20px;
+            font-size: 10px;
+            color: var(--threat-red);
+            letter-spacing: 0.3em;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border: 1px solid rgba(255, 0, 51, 0.5);
+            background: transparent;
+            color: var(--threat-red);
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .close-modal:hover {
+            background: var(--threat-red);
+            color: #000;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .tactical-display { width: 350px; height: 350px; }
+            .forest-command { display: none; }
+            .threat-panel { width: calc(100% - 80px); left: 40px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="cosmic-void"></div>
+    <div class="starfield" id="starfield"></div>
+    
+    <div class="forest-cursor cursor-hunter" id="hunter"></div>
+    <div class="forest-cursor cursor-stealth" id="stealth"></div>
+    
+    <nav class="forest-command">
+        <div class="command-header">CIVILIZATION DETECTED</div>
+        <ul class="civilization-list">
+            <li class="civ-signal active" data-civ="proxima" onclick="analyzeCiv('proxima')">
+                <div class="civ-distance">4.24 LY // PROXIMA CENTAURI</div>
+                <div class="civ-name">TECHNO-OPTIMISTS</div>
+                <div class="civ-threat high">THREAT LEVEL: MAXIMUM</div>
+            </li>
+            <li class="civ-signal" data-civ="trappist" onclick="analyzeCiv('trappist')">
+                <div class="civ-distance">39 LY // TRAPPIST-1</div>
+                <div class="civ-name">HIVE MIND COLLECTIVE</div>
+                <div class="civ-threat medium">THREAT LEVEL: ELEVATED</div>
+            </li>
+            <li class="civ-signal" data-civ="kepler" onclick="analyzeCiv('kepler')">
+                <div class="civ-distance">2,545 LY // KEPLER-442B</div>
+                <div class="civ-name">SILENT OBSERVERS</div>
+                <div class="civ-threat low">THREAT LEVEL: UNKNOWN</div>
+            </li>
+        </ul>
+    </nav>
+    
+    <div class="tactical-display">
+        <div class="holographic-ring ring-detection"></div>
+        <div class="holographic-ring ring-stealth"></div>
+        <div class="holographic-ring ring-communication"></div>
+        
+        <div class="swarm-container" id="swarmContainer"></div>
+        
+        <div class="axiom-display">
+            <h1 class="axiom-title">DARK FOREST</h1>
+            <p class="axiom-text">
+                "The universe is a dark forest. Every civilization is an armed hunter stalking 
+                through the trees like a ghost. The only <span class="survival" onclick="revealAxiom()">survival</span> 
+                strategy is to remain silent and strike first."
+            </p>
+        </div>
+    </div>
+    
+    <div class="threat-panel">
+        <div class="panel-header">
+            <span>THREAT_ASSESSMENT</span>
+            <span class="panel-status">● LIVE</span>
+        </div>
+        <div class="thread-metric">
+            <span class="thread-label">DETECTION PROBABILITY</span>
+            <span class="thread-value" id="detectionVal">23.7%</span>
+        </div>
+        <div class="threat-bar">
+            <div class="threat-level"></div>
+        </div>
+        <div class="thread-metric" style="margin-top: 20px;">
+            <span class="thread-label">STEALTH INTEGRITY</span>
+            <span class="thread-value" id="stealthVal">89.4%</span>
+        </div>
+        <div class="thread-metric">
+            <span class="thread-label">CHAIN OF SUSPICION</span>
+            <span class="thread-value" style="color: var(--threat-red);">ACTIVE</span>
+        </div>
+    </div>
+    
+    <div class="suspicion-modal" id="suspicionModal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal()">×</button>
+            <h2 style="font-family: 'Orbitron', sans-serif; color: var(--threat-red); margin-bottom: 30px; font-size: 1.5rem;">
+                AXIOM OF SUSPICION
+            </h2>
+            <p style="color: rgba(255,255,255,0.7); line-height: 1.8; font-size: 1.1rem;">
+                Once a civilization is detected, the only rational move is to preemptively strike. 
+                Communication is suicide. The dark forest is silent because everyone is hiding. 
+                Everyone is armed. Everyone is afraid.
+            </p>
+            <div style="margin-top: 40px; padding: 20px; border: 1px solid rgba(255,0,51,0.3); background: rgba(255,0,51,0.05);">
+                <p style="font-family: 'Orbitron', monospace; font-size: 0.9rem; color: var(--threat-red);">
+                    RECOMMENDATION: IMMEDIATE STRIKE
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Generate starfield
+        const starfield = document.getElementById('starfield');
+        for (let i = 0; i < 200; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.width = Math.random() * 3 + 'px';
+            star.style.height = star.style.width;
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.animationDelay = Math.random() * 3 + 's';
+            starfield.appendChild(star);
+        }
+        
+        // Cursor system
+        const hunter = document.getElementById('hunter');
+        const stealth = document.getElementById('stealth');
+        let mouseX = 0, mouseY = 0;
+        let cursorX = 0, cursorY = 0;
+        let currentTool = 'stealth';
+        
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+        
+        function animateCursor() {
+            cursorX += (mouseX - cursorX) * 0.1;
+            cursorY += (mouseY - cursorY) * 0.1;
+            
+            if (currentTool === 'hunter') {
+                hunter.style.left = cursorX - 30 + 'px';
+                hunter.style.top = cursorY - 30 + 'px';
+            } else {
+                stealth.style.left = cursorX - 20 + 'px';
+                stealth.style.top = cursorY - 20 + 'px';
+            }
+            
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+        
+        stealth.classList.add('active');
+        
+        // Swarm intelligence nodes
+        const swarmContainer = document.getElementById('swarmContainer');
+        const nodes = [];
+        const nodeCount = 20;
+        
+        for (let i = 0; i < nodeCount; i++) {
+            const node = document.createElement('div');
+            node.className = 'swarm-node';
+            node.style.left = Math.random() * 100 + '%';
+            node.style.top = Math.random() * 100 + '%';
+            swarmContainer.appendChild(node);
+            nodes.push({
+                element: node,
+                x: parseFloat(node.style.left),
+                y: parseFloat(node.style.top),
+                vx: (Math.random() - 0.5) * 0.2,
+                vy: (Math.random() - 0.5) * 0.2
+            });
+        }
+        
+        // Swarm behavior
+        function updateSwarm() {
+            nodes.forEach((node, i) => {
+                // Flocking behavior
+                let avgX = 0, avgY = 0;
+                let count = 0;
+                
+                nodes.forEach((other, j) => {
+                    if (i !== j) {
+                        const dx = other.x - node.x;
+                        const dy = other.y - node.y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (dist < 30) {
+                            avgX += other.x;
+                            avgY += other.y;
+                            count++;
+                        }
+                    }
+                });
+                
+                if (count > 0) {
+                    avgX /= count;
+                    avgY /= count;
+                    node.vx += (avgX - node.x) * 0.001;
+                    node.vy += (avgY - node.y) * 0.001;
+                }
+                
+                // Mouse avoidance (stealth behavior)
+                const mdx = (mouseX / window.innerWidth * 100) - node.x;
+                const mdy = (mouseY / window.innerHeight * 100) - node.y;
+                const mdist = Math.sqrt(mdx * mdx + mdy * mdy);
+                
+                if (mdist < 20) {
+                    node.vx -= mdx * 0.01;
+                    node.vy -= mdy * 0.01;
+                    node.element.classList.add('threat');
+                } else {
+                    node.element.classList.remove('threat');
+                }
+                
+                // Update position
+                node.x += node.vx;
+                node.y += node.vy;
+                
+                // Boundaries
+                if (node.x < 0 || node.x > 100) node.vx *= -1;
+                if (node.y < 0 || node.y > 100) node.vy *= -1;
+                
+                node.element.style.left = node.x + '%';
+                node.element.style.top = node.y + '%';
+            });
+            
+            requestAnimationFrame(updateSwarm);
+        }
+        updateSwarm();
+        
+        // Tool switching on civ hover
+        document.querySelectorAll('.civ-signal').forEach(civ => {
+            civ.addEventListener('mouseenter', () => {
+                stealth.classList.remove('active');
+                hunter.classList.add('active');
+                currentTool = 'hunter';
+            });
+            civ.addEventListener('mouseleave', () => {
+                hunter.classList.remove('active');
+                stealth.classList.add('active');
+                currentTool = 'stealth';
+            });
+        });
+        
+        // Civilization analysis
+        function analyzeCiv(civ) {
+            document.querySelectorAll('.civ-signal').forEach(c => c.classList.remove('active'));
+            document.querySelector(`[data-civ="${civ}"]`).classList.add('active');
+            
+            // Update threat metrics
+            const threats = {
+                proxima: { detection: '67.3%', stealth: '45.2%' },
+                trappist: { detection: '34.1%', stealth: '78.9%' },
+                kepler: { detection: '12.4%', stealth: '91.7%' }
+            };
+            
+            const t = threats[civ];
+            document.getElementById('detectionVal').textContent = t.detection;
+            document.getElementById('stealthVal').textContent = t.stealth;
+        }
+        
+        // Reveal axiom modal
+        function revealAxiom() {
+            document.getElementById('suspicionModal').classList.add('active');
+        }
+        
+        function closeModal() {
+            document.getElementById('suspicionModal').classList.remove('active');
+        }
+        
+        // Random threat fluctuation
+        setInterval(() => {
+            const detection = document.getElementById('detectionVal');
+            const current = parseFloat(detection.textContent);
+            const variation = (Math.random() - 0.5) * 2;
+            detection.textContent = Math.max(0, Math.min(100, current + variation)).toFixed(1) + '%';
+        }, 3000);
+    </script>
+</body>
+</html>
